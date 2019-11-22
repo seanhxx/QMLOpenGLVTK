@@ -17,7 +17,7 @@ set(CMAKE_AUTOMOC ON)
 #########################
 
 # Find Qt
-set(CMAKE_PREFIX_PATH $ENV{QT_DIR}/../)
+set(QT5_INSTALL_PREFIX $ENV{QT_DIR}/../)
 find_package(Qt5 COMPONENTS Quick Widgets Core Qml QuickControls2 REQUIRED)
 qt5_add_resources(RESOURCES resources/qml.qrc)
 
@@ -27,6 +27,9 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
+#########
+# Build #
+#########
 set(SOURCES
     app/main.cpp
     src/QmlVTKRenderWindowInteractor.cpp
@@ -36,6 +39,10 @@ add_executable(${EXENAME} ${HEADERS} ${SOURCES} ${RESOURCES})
 
 target_link_libraries(${EXENAME} Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2)
 
+##########
+# Deploy #
+##########
+set(WINDEPLOYQT_EXECUTABLE "${QT5_INSTALL_PREFIX}/bin/windeploypt.exe")
 # add_custom_command(TARGET ${EXENAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_PREFIX_PATH}\\bin $<TARGET_FILE_DIR:${EXENAME}>)
 # add_custom_command(TARGET ${EXENAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_PREFIX_PATH}\\plugins $<TARGET_FILE_DIR:${EXENAME}>)
 # add_custom_command(TARGET ${EXENAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_PREFIX_PATH}\\qml $<TARGET_FILE_DIR:${EXENAME}>)
