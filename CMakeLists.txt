@@ -1,48 +1,79 @@
 ###########
 # Project #
 ###########
-set(PROJECT_SOURCE_DIR ./)
-set(EXENAME QMLOpenGLVTK)
 cmake_minimum_required(VERSION 3.10)
-project(${EXENAME} LANGUAGES CXX)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+project(QMLOpenGLVTK LANGUAGES CXX)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 #########################
 # External Dependencies #
 #########################
 
-# Find Qt
+#Set all dependencies dir
 set(QT5_INSTALL_PREFIX $ENV{QT_DIR}/../)
-find_package(Qt5 COMPONENTS Quick Widgets Core Qml QuickControls2 REQUIRED)
+set(VTK_INSTALL_PREFIX $ENV{VTK_DIR}/../)
+set(CMAKE_PREFIX_PATH ${QT5_INSTALL_PREFIX})
+set(CMAKE_PREFIX_PATH=%CMAKE_PREFIX_PATH%$<SEMICOLON>${VTK_INSTALL_PREFIX})
+
+# Find Qt
+find_package(Qt5 COMPONENTS Quick Widgets Qml QuickControls2 REQUIRED)
 qt5_add_resources(RESOURCES resources/qml.qrc)
 
 #Find VTK
-
-include_directories(
-    ${PROJECT_SOURCE_DIR}/include
-)
+find_package(VTK)
 
 #########
-# Build #
+# BUILD #
 #########
 set(SOURCES
     app/main.cpp
-    src/QmlVTKRenderWindowInteractor.cpp
+    #src/QmlVTKRenderWindowInteractor.cpp
 )
 
-add_executable(${EXENAME} ${HEADERS} ${SOURCES} ${RESOURCES})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${RESOURCES})
 
-target_link_libraries(${EXENAME} Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2)
+target_include_directories(${CMAKE_PROJECT_NAME}
+    PUBLIC
+        $<INSTALL_INTERFACE:interface>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include_>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
-##########
-# Deploy #
-##########
-set(WINDEPLOYQT_EXECUTABLE "${QT5_INSTALL_PREFIX}/bin/windeploypt.exe")
-# add_custom_command(TARGET ${EXENAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_PREFIX_PATH}\\bin $<TARGET_FILE_DIR:${EXENAME}>)
-# add_custom_command(TARGET ${EXENAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_PREFIX_PATH}\\plugins $<TARGET_FILE_DIR:${EXENAME}>)
-# add_custom_command(TARGET ${EXENAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_PREFIX_PATH}\\qml $<TARGET_FILE_DIR:${EXENAME}>)
+########
+# LINK #
+########
+target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_11)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin/Debug"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/Release"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}/bin/MinSizeRel"
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME} 
+    PUBLIC
+        Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2
+)
+
+##############
+# POST BUILD #
+##############
+
+#Qt Deployment
+
+#Set path to windeployqt.exe
+find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS "${QT5_INSTALL_PREFIX}/bin")
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${WINDEPLOYQT_EXECUTABLE} "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
+        --qmldir ${CMAKE_SOURCE_DIR}/resources
+)
