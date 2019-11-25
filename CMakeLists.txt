@@ -1,3 +1,5 @@
+#TODO: Add cross platform compatibiliy
+
 ###########
 # Project #
 ###########
@@ -17,6 +19,7 @@ set(CMAKE_AUTOUIC ON)
 #########################
 
 #Set all dependencies dir
+#Create Environment Variable QT_DIR, VTK_DIR point to bin. Example:
 set(QT5_INSTALL_PREFIX $ENV{QT_DIR}/../)
 set(VTK_INSTALL_PREFIX $ENV{VTK_DIR}/../)
 set(CMAKE_PREFIX_PATH ${QT5_INSTALL_PREFIX})
@@ -42,7 +45,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME}
     PUBLIC
         $<INSTALL_INTERFACE:interface>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include_>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
