@@ -1,7 +1,7 @@
 #ifndef QmlVTKRenderWindowInteractor_h
 #define QmlVTKRenderWindowInteractor_h
 
-#include <QQuick/QQuickFramebufferObject>
+#include <QQuickFramebufferObject>
 
 class QmlOpenGLWindowInteractor : public QQuickFramebufferObject
 {
@@ -14,8 +14,6 @@ public:
     void mousePressEvent(QMouseEvent *e) override;
     void testMethod();
 }
-
-
 
 
 #endif

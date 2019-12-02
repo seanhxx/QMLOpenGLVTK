@@ -1,11 +1,47 @@
-import QtQuick 2.9
+ import QtQuick 2.9
+//import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
+/* import QmlVTK 1.0 */
 
 ApplicationWindow {
+    id: root
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Hello World")
+    minimumWidth: 1024
+    minimumHeight: 768
+    title: qsTr("QmlVTKInteractor")
+
+    Material.primary: Material.Indigo
+    Material.accent: Material.LightBlue
+
+    Rectangle {
+        id: vtkViewer
+        width: 200
+        height: 200
+        anchors.right: parent.right
+        color: "red"
+
+/*         Interactor {
+            id: interactor
+            objectName: "interactor"
+            Text{
+                text: "interactor is here"
+            }
+
+            anchors.fill: parent
+            MouseArea{
+                anchors.fill: parent
+                onPressed:{
+                    mainWindow.mousePressHandler(pressedButtons, mouseX, mouseY);
+                }
+            }
+
+        } */
+
+
+
+    }
+
 
     TextField {
         id: textField
