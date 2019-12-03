@@ -10,6 +10,7 @@ project(QMLOpenGLVTK LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -30,17 +31,25 @@ find_package(Qt5 COMPONENTS Quick Widgets Qml QuickControls2 REQUIRED)
 qt5_add_resources(RESOURCES resources/qml.qrc)
 
 #Find VTK
-find_package(VTK)
+#find_package(VTK)
 
 #########
 # BUILD #
 #########
 set(SOURCES
     app/main.cpp
-    #src/QmlVTKRenderWindowInteractor.cpp
+    app/MainWindow.cpp
+    src/QmlOpenGLWindowInteractor.cpp
+    src/QmlVTKOpenGLRenderWindowInteractor.cpp
 )
 
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${RESOURCES})
+#Include QObject class header files here
+set(HEADERS
+    include/QmlOpenGLWindowInteractor.h
+    include/QmlVTKOpenGLRenderWindowInteractor.h
+)
+
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES})
 
 target_include_directories(${CMAKE_PROJECT_NAME}
     PUBLIC
@@ -66,7 +75,7 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
 
 target_link_libraries(${CMAKE_PROJECT_NAME} 
     PUBLIC
-        Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2
+        Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2 
 )
 
 ##############

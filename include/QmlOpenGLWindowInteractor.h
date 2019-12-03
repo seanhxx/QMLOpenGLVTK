@@ -1,5 +1,5 @@
-#ifndef QmlVTKRenderWindowInteractor_h
-#define QmlVTKRenderWindowInteractor_h
+#ifndef QmlOpenGLWindowInteractor_h
+#define QmlOpenGLWindowInteractor_h
 
 #include <QQuickFramebufferObject>
 
@@ -10,10 +10,9 @@ class QmlOpenGLWindowInteractor : public QQuickFramebufferObject
 public:
     QmlOpenGLWindowInteractor();    
 
-    Renderer *createRenderer() const Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *e) override;
+    QQuickFramebufferObject::Renderer * createRenderer() const Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent * e) override;
     void testMethod();
-}
-
+};
 
 #endif

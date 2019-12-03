@@ -1,11 +1,11 @@
-#ifndef QmlVTKOpenGLRenderWindowInteractor
-#define QmlVTKOpenGLRenderWindowInteractor
+#ifndef QmlVTKOpenGLRenderWindowInteractor_h
+#define QmlVTKOpenGLRenderWindowInteractor_h
 
-#include <QQuick/QQuickFramebufferObject>
-#include <QtGui/QOpenGLFramebufferObject>
-#include <QtGui/QOpenGLFramebufferObjectFormat>
+#include <QQuickFramebufferObject>
+#include <QOpenGLFramebufferObject>
+#include <QOpenGLFramebufferObjectFormat>
 
-class QmlVTKOpenGLRenderWindowInteractor : public QQuickFramebufferObject::Renderer
+class QmlVTKOpenGLRenderWindowInteractor : public QObject, public QQuickFramebufferObject::Renderer
 {
     Q_OBJECT
 
@@ -15,6 +15,6 @@ public:
     QOpenGLFramebufferObject * createFramebufferObject(const QSize & size);
     virtual void synchronize(QQuickFramebufferObject * item);
     virtual void render();
-}
+};
 
 #endif

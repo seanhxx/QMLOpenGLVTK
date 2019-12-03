@@ -2,7 +2,7 @@
 //import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
-/* import QmlVTK 1.0 */
+import QmlVTK 1.0
 
 ApplicationWindow {
     id: root
@@ -21,7 +21,7 @@ ApplicationWindow {
         anchors.right: parent.right
         color: "red"
 
-/*         Interactor {
+        Interactor {
             id: interactor
             objectName: "interactor"
             Text{
@@ -36,7 +36,7 @@ ApplicationWindow {
                 }
             }
 
-        } */
+        }
 
 
 

@@ -1,7 +1,6 @@
 #ifndef MainWindow_h
 #define MainWindow_h
 
-#include <memory>
 #include <QObject>
 
 class MainWindow : public QObject
@@ -13,7 +12,7 @@ public:
 
 public slots:
     void mousePressHandler(const int & button, const int & mouseX, const int & mouseY);
-}
+};
 
 
 #endif

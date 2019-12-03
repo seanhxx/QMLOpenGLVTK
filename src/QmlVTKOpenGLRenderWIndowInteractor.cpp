@@ -1,5 +1,4 @@
-#include <memory>
-#include "include/QmlVTKOpenGLRenderWindowInteractor.h"
+#include "QmlVTKOpenGLRenderWindowInteractor.h"
 
 QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor()
 {
@@ -12,7 +11,6 @@ QOpenGLFramebufferObject * QmlVTKOpenGLRenderWindowInteractor::createFramebuffer
     QOpenGLFramebufferObjectFormat glFormat;
     glFormat.setAttachment(QOpenGLFramebufferObject::Depth);
 
-/*     std::unique_ptr<QOpenGLFramebufferObject> fbo = std::make_unique<QOpenGLFramebufferObject>(size, glFormat); */
     return new QOpenGLFramebufferObject(size, glFormat);
 }
 
