@@ -30,9 +30,11 @@ ApplicationWindow {
 
             anchors.fill: parent
             MouseArea{
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
                 anchors.fill: parent
                 onPressed:{
                     mainWindow.mousePressHandler(pressedButtons, mouseX, mouseY);
+                    mouse.accepted = false
                 }
             }
 
