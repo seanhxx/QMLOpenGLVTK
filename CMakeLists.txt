@@ -31,7 +31,8 @@ find_package(Qt5 COMPONENTS Quick Widgets Qml QuickControls2 REQUIRED)
 qt5_add_resources(RESOURCES resources/qml.qrc)
 
 #Find VTK
-#find_package(VTK)
+find_package(VTK)
+include(${VTK_USE_FILE})
 
 #########
 # BUILD #
@@ -75,7 +76,7 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
 
 target_link_libraries(${CMAKE_PROJECT_NAME} 
     PUBLIC
-        Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2 
+        Qt5::Quick Qt5::Widgets Qt5::Qml Qt5::QuickControls2 ${VTK_LIBRARIES}
 )
 
 ##############
@@ -89,4 +90,29 @@ find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS "${QT5_INSTALL_PREFI
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${WINDEPLOYQT_EXECUTABLE} "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
         --qmldir ${CMAKE_SOURCE_DIR}/resources
+)
+
+if(VTK_FOUND)
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+        file(GLOB VTK_MOD_PATHS "${VTK_INSTALL_PREFIX}/bin/*d.dll")
+    else()
+        file(GLOB VTK_MOD_PATHS "${VTK_INSTALL_PREFIX}/bin/*.dll")
+    endif()
+    foreach(VTK_MOD_PATH IN LISTS VTK_MOD_PATHS)
+        add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${VTK_MOD_PATH}"
+            "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>"
+        )
+    endforeach()
+endif()
+
+##################
+# Copy Resources #
+##################
+file(GLOB REVTK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/ironProt.vtk")
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${REVTK_PATH}" 
+    "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>"
 )
