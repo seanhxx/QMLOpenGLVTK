@@ -13,6 +13,7 @@ public:
     QQuickFramebufferObject::Renderer * createRenderer() const Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent * e) override;
     void testMethod();
+    WId getWinId();
 };
 
 #endif

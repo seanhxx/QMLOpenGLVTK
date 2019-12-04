@@ -37,6 +37,14 @@ QOpenGLFramebufferObject * QmlVTKOpenGLRenderWindowInteractor::createFramebuffer
 void QmlVTKOpenGLRenderWindowInteractor::synchronize(QQuickFramebufferObject * item)
 {
     qDebug() << "Synchronize";    
+    m_qmlIwen = static_cast<QmlOpenGLWindowInteractor *>(item);
+    int wid = m_qmlIwen->getWinId();
+    std::string sWId = std::to_string(wid);
+    char * pWId = new char[sWId.length() + 1];
+    strcpy(pWId, sWId.c_str());
+    qDebug() << "Synchronize Wid: " << wid;
+
+    renderWindow->SetWindowInfo(pWId);
 }
 
 void QmlVTKOpenGLRenderWindowInteractor::render()
@@ -60,6 +68,10 @@ void QmlVTKOpenGLRenderWindowInteractor::render()
     renderWindow->Render();
     qDebug() << "Start Rendering";
     Iren->Start();
+
+    int params = 0;
+    this->glGetIntegerv(32883, &params);
+    qDebug() << "max 3d texture size is: " << params;
 }
 
 void QmlVTKOpenGLRenderWindowInteractor::openGLInitState()

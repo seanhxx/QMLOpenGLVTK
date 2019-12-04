@@ -13,6 +13,10 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
+#include "QmlOpenGLWindowInteractor.h"
+
+class QmlOpenGLWindowInteractor;
+
 class QmlVTKOpenGLRenderWindowInteractor : public QObject, public QQuickFramebufferObject::Renderer, protected QOpenGLFunctions
 {
     Q_OBJECT
@@ -31,6 +35,8 @@ private:
 
     vtkSmartPointer<vtkActor> getPolyDataActor();
     vtkSmartPointer<vtkVolume> getVolumeDataActor();
+
+    QmlOpenGLWindowInteractor * m_qmlIwen = nullptr;
 
     void openGLInitState();
 };
