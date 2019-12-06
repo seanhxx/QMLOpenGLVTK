@@ -12,17 +12,31 @@
 #include <vtkGPUVolumeRayCastMapper.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 
+
 #include "QmlVTKOpenGLRenderWindowInteractor.h"
 
 QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor()
 {
     qDebug() << "QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor: Initialize";
-    renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+/*     renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New(); */
+    renderWindow = vtkSmartPointer<vtkWin32OpenGLRenderWindow>::New();
     ren = vtkSmartPointer<vtkRenderer>::New();
     Iren = vtkSmartPointer<vtkGenericRenderWindowInteractor>::New();
     renderWindow->AddRenderer(ren);
     Iren->SetRenderWindow(renderWindow);
-    renderWindow->OpenGLInitContext();
+
+    QOpenGLContext * glContext = this->getGLContext();
+/*     renderWindow->OpenGLInitContext(); */
+}
+
+QOpenGLContext * QmlVTKOpenGLRenderWindowInteractor::getGLContext() const
+{
+    QOpenGLContext * glContext = new QOpenGLContext();
+    glContext->create();
+    QOffscreenSurface * glSurface = new QOffscreenSurface();
+    glSurface->create();
+    glContext->makeCurrent(glSurface);
+    return glContext;
 }
 
 QOpenGLFramebufferObject * QmlVTKOpenGLRenderWindowInteractor::createFramebufferObject(const QSize & size)
@@ -49,6 +63,8 @@ void QmlVTKOpenGLRenderWindowInteractor::synchronize(QQuickFramebufferObject * i
 
 void QmlVTKOpenGLRenderWindowInteractor::render()
 {
+    renderWindow->InitializeFromCurrentContext();
+    renderWindow->PushContext();
     qDebug() << "Render";    
     this->openGLInitState();
 
@@ -72,6 +88,7 @@ void QmlVTKOpenGLRenderWindowInteractor::render()
     int params = 0;
     this->glGetIntegerv(32883, &params);
     qDebug() << "max 3d texture size is: " << params;
+    renderWindow->PopContext();
 }
 
 void QmlVTKOpenGLRenderWindowInteractor::openGLInitState()

@@ -93,18 +93,16 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 )
 
 if(VTK_FOUND)
-    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-        file(GLOB VTK_MOD_PATHS "${VTK_INSTALL_PREFIX}/bin/*d.dll")
-    else()
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
         file(GLOB VTK_MOD_PATHS "${VTK_INSTALL_PREFIX}/bin/*.dll")
+        foreach(VTK_MOD_PATH IN LISTS VTK_MOD_PATHS)
+            add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VTK_MOD_PATH}"
+                "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>"
+            )
+        endforeach()
     endif()
-    foreach(VTK_MOD_PATH IN LISTS VTK_MOD_PATHS)
-        add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${VTK_MOD_PATH}"
-            "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>"
-        )
-    endforeach()
 endif()
 
 ##################
