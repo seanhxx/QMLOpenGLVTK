@@ -18,15 +18,18 @@
 QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor()
 {
     qDebug() << "QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor: Initialize";
-/*     renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New(); */
-    renderWindow = vtkSmartPointer<vtkWin32OpenGLRenderWindow>::New();
+
+    renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+/*     renderWindow = vtkSmartPointer<vtkWin32OpenGLRenderWindow>::New(); */
+
     ren = vtkSmartPointer<vtkRenderer>::New();
     Iren = vtkSmartPointer<vtkGenericRenderWindowInteractor>::New();
+/*     Iren = vtkSmartPointer<vtkRenderWindowInteractor>::New(); */
     renderWindow->AddRenderer(ren);
     Iren->SetRenderWindow(renderWindow);
 
-    QOpenGLContext * glContext = this->getGLContext();
-/*     renderWindow->OpenGLInitContext(); */
+    renderWindow->OpenGLInitContext();
+/*     QOpenGLContext * glContext = this->getGLContext(); */
 }
 
 QOpenGLContext * QmlVTKOpenGLRenderWindowInteractor::getGLContext() const

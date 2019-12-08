@@ -34,10 +34,11 @@ public:
     QOpenGLContext * getGLContext() const;
 
 private:
-/*     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow; */
-    vtkSmartPointer<vtkWin32OpenGLRenderWindow> renderWindow;
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
+/*     vtkSmartPointer<vtkWin32OpenGLRenderWindow> renderWindow; */
     vtkSmartPointer<vtkRenderer> ren;
     vtkSmartPointer<vtkGenericRenderWindowInteractor> Iren;
+/*     vtkSmartPointer<vtkRenderWindowInteractor> Iren; */
 
     vtkSmartPointer<vtkActor> getPolyDataActor();
     vtkSmartPointer<vtkVolume> getVolumeDataActor();
