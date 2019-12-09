@@ -1,4 +1,11 @@
+
+#include <windows.h>
+#include <wingdi.h>
+
 #include <QCoreApplication>
+#include <QWGLNativeContext>
+#include <QSurfaceFormat>
+#include <QOffscreenSurface>
 
 #include <vtkCylinderSource.h>
 #include <vtkPolyDataMapper.h>
@@ -19,8 +26,8 @@ QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor()
 {
     qDebug() << "QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor: Initialize";
 
-    renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-/*     renderWindow = vtkSmartPointer<vtkWin32OpenGLRenderWindow>::New(); */
+/*     renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New(); */
+    renderWindow = vtkSmartPointer<vtkWin32OpenGLRenderWindow>::New();
 
     ren = vtkSmartPointer<vtkRenderer>::New();
     Iren = vtkSmartPointer<vtkGenericRenderWindowInteractor>::New();
@@ -28,17 +35,22 @@ QmlVTKOpenGLRenderWindowInteractor::QmlVTKOpenGLRenderWindowInteractor()
     renderWindow->AddRenderer(ren);
     Iren->SetRenderWindow(renderWindow);
 
-    renderWindow->OpenGLInitContext();
-/*     QOpenGLContext * glContext = this->getGLContext(); */
 }
 
-QOpenGLContext * QmlVTKOpenGLRenderWindowInteractor::getGLContext() const
+QOpenGLContext * QmlVTKOpenGLRenderWindowInteractor::getWin32GLContext(HDC hdc, HWND hWnd) const
 {
+    HGLRC win32GLRenderingContext = wglCreateContext(hdc);
+
+    QSurfaceFormat format;
+    format.setVersion(4, 5);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setDepthBufferSize(32);
+    format.setStencilBufferSize(8);
+
+    QWGLNativeContext wglContext(win32GLRenderingContext, hWnd);
     QOpenGLContext * glContext = new QOpenGLContext();
-    glContext->create();
-    QOffscreenSurface * glSurface = new QOffscreenSurface();
-    glSurface->create();
-    glContext->makeCurrent(glSurface);
+    glContext->setFormat(format);
+    glContext->setNativeHandle(QVariant::fromValue(wglContext));
     return glContext;
 }
 
@@ -46,7 +58,7 @@ QOpenGLFramebufferObject * QmlVTKOpenGLRenderWindowInteractor::createFramebuffer
 {
     qDebug() << "QmlVTKOpenGLRenderWIndowInteractor::createFramebufferObject";
     QOpenGLFramebufferObjectFormat glFormat;
-    glFormat.setAttachment(QOpenGLFramebufferObject::Depth);
+    glFormat.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
 
     return new QOpenGLFramebufferObject(size, glFormat);
 }
@@ -54,30 +66,48 @@ QOpenGLFramebufferObject * QmlVTKOpenGLRenderWindowInteractor::createFramebuffer
 void QmlVTKOpenGLRenderWindowInteractor::synchronize(QQuickFramebufferObject * item)
 {
     qDebug() << "Synchronize";    
-    m_qmlIwen = static_cast<QmlOpenGLWindowInteractor *>(item);
-    int wid = m_qmlIwen->getWinId();
-    std::string sWId = std::to_string(wid);
-    char * pWId = new char[sWId.length() + 1];
-    strcpy(pWId, sWId.c_str());
-    qDebug() << "Synchronize Wid: " << wid;
 
-    renderWindow->SetWindowInfo(pWId);
+    try
+    {
+        m_qmlIwen = static_cast<QmlOpenGLWindowInteractor *>(item);
+        WId wid = m_qmlIwen->getWinId();
+        HDC hdc = GetDC((HWND)wid);
+        qtGLContext = this->getWin32GLContext(hdc, (HWND)wid);
+        qtGLContext->create();
+        QOffscreenSurface  * surface = new QOffscreenSurface();
+        surface->create();
+        qtGLContext->makeCurrent(surface);
+/*     glContext->makeCurrent(); */
+/*         renderWindow->SetDeviceContext(hdc);
+        qDebug() << "Synchronize Wid: " << hdc; */
+/*         int wid = m_qmlIwen->getWinId();
+        std::string sWId = std::to_string(wid);
+        char * pWId = new char[sWId.length() + 1];
+        strcpy(pWId, sWId.c_str());
+        qDebug() << "Synchronize Wid: " << wid;
+        renderWindow->SetWindowInfo(pWId); */
+    }
+    catch(...)
+    {
+        qWarning() << "Get Wid Error";
+    }
 }
 
 void QmlVTKOpenGLRenderWindowInteractor::render()
 {
-    renderWindow->InitializeFromCurrentContext();
-    renderWindow->PushContext();
+/*     renderWindow->Initialize(); */
     qDebug() << "Render";    
+    renderWindow->InitializeFromCurrentContext();
+/*     renderWindow->PushContext(); */
     this->openGLInitState();
 
-/*     vtkSmartPointer<vtkActor> cylinder = this->getPolyDataActor();
+    vtkSmartPointer<vtkActor> cylinder = this->getPolyDataActor();
     ren->AddActor(cylinder);
-    ren->SetBackground(0.1, 0.2, 0.4); */
+    ren->SetBackground(0.1, 0.2, 0.4);
 
-    vtkSmartPointer<vtkVolume> ironProtVolume = this->getVolumeDataActor();    
+/*     vtkSmartPointer<vtkVolume> ironProtVolume = this->getVolumeDataActor();    
     ren->AddVolume(ironProtVolume);
-    ren->SetBackground(1, 1, 1);
+    ren->SetBackground(1, 1, 1); */
 
     renderWindow->SetSize(150, 150);
 
@@ -88,16 +118,16 @@ void QmlVTKOpenGLRenderWindowInteractor::render()
     qDebug() << "Start Rendering";
     Iren->Start();
 
-    int params = 0;
+/*     int params = 0;
     this->glGetIntegerv(32883, &params);
     qDebug() << "max 3d texture size is: " << params;
-    renderWindow->PopContext();
+    renderWindow->PopContext(); */
 }
 
 void QmlVTKOpenGLRenderWindowInteractor::openGLInitState()
 {
-    renderWindow->OpenGLInitState();
-    renderWindow->MakeCurrent();
+/*     renderWindow->OpenGLInitState(); */
+/*     renderWindow->MakeCurrent(); */
     this->initializeOpenGLFunctions();
     this->glUseProgram(0);
 }

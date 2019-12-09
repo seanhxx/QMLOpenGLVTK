@@ -7,7 +7,6 @@
 #include <QOpenGLFunctions>
 
 #include <QOpenGLContext>
-#include <QOffscreenSurface>
 
 #include <vtkActor.h>
 #include <vtkVolume.h>
@@ -31,11 +30,11 @@ public:
     QOpenGLFramebufferObject * createFramebufferObject(const QSize & size);
     virtual void synchronize(QQuickFramebufferObject * item);
     virtual void render();
-    QOpenGLContext * getGLContext() const;
+    QOpenGLContext * getWin32GLContext(HDC hdc, HWND hWnd) const;
 
 private:
-    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
-/*     vtkSmartPointer<vtkWin32OpenGLRenderWindow> renderWindow; */
+/*     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow; */
+    vtkSmartPointer<vtkWin32OpenGLRenderWindow> renderWindow;
     vtkSmartPointer<vtkRenderer> ren;
     vtkSmartPointer<vtkGenericRenderWindowInteractor> Iren;
 /*     vtkSmartPointer<vtkRenderWindowInteractor> Iren; */
@@ -44,6 +43,7 @@ private:
     vtkSmartPointer<vtkVolume> getVolumeDataActor();
 
     QmlOpenGLWindowInteractor * m_qmlIwen = nullptr;
+    QOpenGLContext * qtGLContext = nullptr;
 
     void openGLInitState();
 };
