@@ -1,5 +1,5 @@
  import QtQuick 2.9
-//import QtQuick.Window 2.2
+import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QmlVTK 1.0
@@ -16,10 +16,12 @@ ApplicationWindow {
 
     Rectangle {
         id: vtkViewer
+        //color: "red"
+        objectName:"iWin"
         width: 200
         height: 200
         anchors.right: parent.right
-        color: "red"
+        visible: true
 
         Interactor {
             id: interactor
@@ -39,10 +41,8 @@ ApplicationWindow {
             }
 
         }
-
-
-
     }
+
 
 
     TextField {

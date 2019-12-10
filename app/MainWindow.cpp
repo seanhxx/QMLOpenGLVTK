@@ -17,6 +17,6 @@ void MainWindow::mousePressHandler(const int & button, const int & mouseX, const
     QQmlContext * currentContext = QQmlApplicationEngine::contextForObject(this);
     QQmlApplicationEngine * engine = qobject_cast<QQmlApplicationEngine *>(currentContext->engine());
     QObject * rootObject = engine->rootObjects().first();
-    QmlOpenGLWindowInteractor * interactor = rootObject->findChild<QmlOpenGLWindowInteractor *>("Interactor");
+    QmlOpenGLWindowInteractor * interactor = rootObject->findChild<QmlOpenGLWindowInteractor *>("interactor");
     interactor->testMethod();
 }

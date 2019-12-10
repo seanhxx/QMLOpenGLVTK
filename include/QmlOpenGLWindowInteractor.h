@@ -2,6 +2,8 @@
 #define QmlOpenGLWindowInteractor_h
 
 #include <QQuickFramebufferObject>
+#include <QQuickWindow>
+#include <QWindow>
 
 class QmlOpenGLWindowInteractor : public QQuickFramebufferObject
 {
@@ -14,6 +16,7 @@ public:
     void mousePressEvent(QMouseEvent * e) override;
     void testMethod();
     WId getWinId();
+    QWindow * itemWindow = nullptr;
 };
 
 #endif

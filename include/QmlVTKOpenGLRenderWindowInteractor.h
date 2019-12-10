@@ -12,6 +12,7 @@
 #include <vtkVolume.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkWin32OpenGLRenderWindow.h>
+#include <vtkExternalOpenGLRenderWindow.h>
 #include <vtkGenericRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
@@ -34,7 +35,8 @@ public:
 
 private:
 /*     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow; */
-    vtkSmartPointer<vtkWin32OpenGLRenderWindow> renderWindow;
+/*     vtkSmartPointer<vtkWin32OpenGLRenderWindow> renderWindow; */
+    vtkSmartPointer<vtkExternalOpenGLRenderWindow> renderWindow;
     vtkSmartPointer<vtkRenderer> ren;
     vtkSmartPointer<vtkGenericRenderWindowInteractor> Iren;
 /*     vtkSmartPointer<vtkRenderWindowInteractor> Iren; */

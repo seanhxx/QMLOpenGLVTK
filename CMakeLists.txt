@@ -22,21 +22,22 @@ set(CMAKE_AUTOUIC ON)
 #Set all dependencies dir
 #Create Environment Variable QT_DIR, VTK_DIR point to bin. Example:
 get_filename_component(QT5_INSTALL_PREFIX $ENV{QT_DIR} DIRECTORY)
-get_filename_component(VTK_INSTALL_PREFIX $ENV{QT_DIR} DIRECTORY)
+get_filename_component(VTK_INSTALL_PREFIX $ENV{VTK_DIR} DIRECTORY)
 set(CMAKE_PREFIX_PATH "${QT5_INSTALL_PREFIX};${VTK_INSTALL_PREFIX}")
 
 # Find Qt
 find_package(Qt5 COMPONENTS Quick Widgets Qml QuickControls2 REQUIRED)
 qt5_add_resources(RESOURCES resources/qml.qrc)
-include_directories(
-    ${QT5_INSTALL_PREFIX}/include/QtPlatformHeaders
-)
 
 #Find VTK
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
 find_package(OpenGL REQUIRED)
+
+include_directories(
+    ${QT5_INSTALL_PREFIX}/include/QtPlatformHeaders
+)
 
 #########
 # BUILD #
@@ -54,6 +55,7 @@ set(HEADERS
     include/QmlVTKOpenGLRenderWindowInteractor.h
     ${QT5_INSTALL_PREFIX}/include/QtPlatformHeaders/qwglnativecontext.h
 )
+
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES})
 
